@@ -144,7 +144,7 @@ try:
             alt.value("orange"),
             alt.value("steelblue")
         ),
-        tooltip = ["score"]
+        tooltip = ["shift_amount", "score"]
     )
     st.altair_chart(c, use_container_width=True)
 except (KeyError, ValueError):
