@@ -96,6 +96,8 @@ except KeyError:
 
 st.header("Letter frequencies")
 
+st.markdown("Can you find the shift amount that makes the letter distribution closest to the expected letter distribution in English?")
+
 st.write("Here is the expected letter frequency in English:")
 
 st.altair_chart(freq_chart, use_container_width=True)
@@ -122,7 +124,7 @@ except KeyError:
 
 st.header("Index of coincidence")
 
-st.write("For the listed shift amounts, we state the index of coincidence.")
+st.markdown("For the listed shift amounts, we state the index of coincidence.  For random text, we expect an index of coincidence of approximately $0.04$.  For English text, we expect an index of coincidence of approximately $0.065$.  For convenience, the values above $0.06$ will be highlighted.")
 
 try:
     subdict = countsubstrings(st.session_state["ciphertext"], 1)
