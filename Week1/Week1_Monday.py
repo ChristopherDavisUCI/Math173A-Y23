@@ -5,9 +5,6 @@ import numpy as np
 import pandas as pd
 import altair as alt
 
-import sys
-sys.path.append('../')
-
 from CryptoHelper import english_freq
 
 letterset = frozenset(string.ascii_letters)
