@@ -5,11 +5,14 @@ import numpy as np
 import pandas as pd
 import altair as alt
 
+import sys
+sys.path.append('../')
+
+from CryptoHelper import english_freq
+
 letterset = frozenset(string.ascii_letters)
 
-englishfreq = [0.082, 0.014, 0.028, 0.038, 0.131, 0.029, 0.02, 0.053, 0.064, 0.001, 0.004, 0.034, 0.025, 0.071, 0.08, 0.02, 0.001, 0.068, 0.061, 0.105, 0.025, 0.009, 0.015, 0.002, 0.02, 0.001]
-
-df_english_freq = pd.DataFrame({"freq": englishfreq, "letter": list(string.ascii_lowercase)})
+df_english_freq = pd.DataFrame({"freq": english_freq, "letter": list(string.ascii_lowercase)})
 
 freq_chart = alt.Chart(df_english_freq).mark_bar().encode(
     x="letter",
@@ -134,7 +137,7 @@ try:
     for i in range(-25, 26):
         j = i%26
         # Think about why we need the -j here
-        coins[i] = np.dot(englishfreq, freqs[-j:]+freqs[:-j])
+        coins[i] = np.dot(english_freq, freqs[-j:]+freqs[:-j])
     ser = pd.Series(coins, name="score")
     df_score = pd.DataFrame(ser).reset_index()
     df_score.rename({"index": "shift_amount"}, axis=1, inplace=True)
