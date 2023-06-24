@@ -4,9 +4,11 @@ import textwrap
 import numpy as np
 import pandas as pd
 import altair as alt
+from importlib import reload
+import CryptoHelper
+reload(CryptoHelper)
 
-
-from CryptoHelper import english_freq, count_substrings
+from CryptoHelper import english_freq, only_letters, count_substrings
 
 letterset = frozenset(string.ascii_letters)
 
@@ -18,18 +20,18 @@ freq_chart = alt.Chart(df_english_freq).mark_bar().encode(
     tooltip="freq"
 )
 
-def only_letters(X, case=None):
-    X = ''.join(c for c in X if c in letterset)
+# def only_letters(X, case=None):
+#     X = ''.join(c for c in X if c in letterset)
 
-    if len(X) == 0:
-        return None
+#     if len(X) == 0:
+#         return None
     
-    if case is None:
-        return X
-    elif case == "lower":
-        return X.lower()
-    elif case == "upper":
-        return X.upper()
+#     if case is None:
+#         return X
+#     elif case == "lower":
+#         return X.lower()
+#     elif case == "upper":
+#         return X.upper()
 
 rng = np.random.default_rng()
     
