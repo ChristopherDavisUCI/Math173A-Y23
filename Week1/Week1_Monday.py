@@ -5,9 +5,8 @@ import numpy as np
 import pandas as pd
 import altair as alt
 
-from CryptoHelper import english_freq
 
-letterset = frozenset(string.ascii_letters)
+from CryptoHelper import english_freq, only_letters, count_substrings
 
 df_english_freq = pd.DataFrame({"freq": english_freq, "letter": list(string.ascii_lowercase)})
 
@@ -18,19 +17,6 @@ freq_chart = alt.Chart(df_english_freq).mark_bar().encode(
 )
 
 rng = np.random.default_rng()
-
-def only_letters(X, case=None):
-    X = ''.join(filter(letterset.__contains__, X))
-
-    if len(X) == 0:
-        return None
-    
-    if case is None:
-        return X
-    elif case == "lower":
-        return X.lower()
-    elif case == "upper":
-        return X.upper()
     
 def string_for_code_block(X, linewidth=50):
     return '\n'.join(textwrap.wrap(X, width=linewidth))
@@ -39,18 +25,6 @@ def add_spaces(X, width=5, linewidth=50):
     one_line = ' '.join(textwrap.wrap(X, width=width))
     many_lines = string_for_code_block(one_line, linewidth=linewidth)
     return many_lines
-
-def countsubstrings(X,n):
-    if not X:
-        return {}
-    X = only_letters(X)
-    subdict = {}
-    for i in range(0,len(X)-n+1):
-        if X[i:i+n] in subdict:
-            subdict[X[i:i+n]] += 1
-        else:
-            subdict[X[i:i+n]] = 1
-    return subdict
 
 def shift_encrypt(X=None, shift_amt = None, spaces=False, key=None):
     if not X:
@@ -89,6 +63,8 @@ enc_button = st.button(
                     )
 
 try:
+    st.markdown('''It's conventional to include spaces every 5th character in the ciphertext, to make the ciphertext easier to look at.''')
+
     st.code(st.session_state["ciphertext"])
 except KeyError:
     disp = '''Click the above button to encrypt your plaintext using the shift cipher with a randomly chosen shift amount.'''
@@ -107,7 +83,7 @@ shift_amt = st.slider("Shift amount", min_value=-50, max_value=50, value=0, step
 st.write("Here are the letter counts in the shifted ciphertext:")
 
 try:
-    subdict = countsubstrings(shift_encrypt(st.session_state["ciphertext"], shift_amt, spaces=False), 1)
+    subdict = count_substrings(shift_encrypt(st.session_state["ciphertext"], shift_amt, spaces=False), 1)
     ser_count = pd.Series(subdict, name="count")
     df_count = pd.DataFrame(ser_count).reset_index()
     df_count.rename({"index": "letter"}, axis=1, inplace=True)
@@ -122,12 +98,12 @@ try:
 except KeyError:
     pass
 
-st.header("Index of coincidence")
+st.header("Mutual Index of Coincidence")
 
-st.markdown("For the listed shift amounts, we state the index of coincidence.  For random text, we expect an index of coincidence of approximately $0.04$.  For English text, we expect an index of coincidence of approximately $0.065$.  For convenience, the values above $0.06$ will be highlighted.")
+st.markdown('''For the listed shift amounts, we state the Mutual Index of Coincidence (see Section 5.2 of Hoffstein, Pipher, and Silverman) between this shifted text and "average" English text.  For random text, we expect a Mutual Index of Coincidence of approximately $0.04$.  For English text, we expect a Mutual Index of Coincidence of approximately $0.065$.  For convenience, the values above $0.06$ will be highlighted.''')
 
 try:
-    subdict = countsubstrings(st.session_state["ciphertext"], 1)
+    subdict = count_substrings(st.session_state["ciphertext"], 1)
     freqs = np.array([subdict.get(c,0) for c in string.ascii_uppercase])
     freqs = list(freqs/freqs.sum())
     coins = {}
